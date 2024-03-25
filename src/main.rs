@@ -1,4 +1,5 @@
 use std::fmt;
+use std::time::{Duration, Instant};
 const BOARD_SIZE: usize = 9;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -143,6 +144,10 @@ fn main() {
     solve(&mut board);
 
     println!("{}", board);
+
+    println!("Benchmarking my_function_to_benchmark:");
+    measure_execution_time(&mut board);
+    run_benchmarks(&mut board);
 }
 
 #[cfg(test)]
@@ -203,4 +208,32 @@ mod tests {
             }
         }
     }
+}
+
+fn measure_execution_time(board: &mut Board) {
+    let start_time = Instant::now();
+
+    solve(board);
+
+    let end_time = Instant::now();
+    let elapsed_time = end_time - start_time;
+
+    println!("Elapsed time: {:?}", elapsed_time);
+}
+
+fn run_benchmarks(board: &mut Board) {
+    const NUM_RUNS: u32 = 1000;
+    let mut total_elapsed_time = Duration::new(0, 0);
+
+    for _ in 0..NUM_RUNS {
+        let start_time = Instant::now();
+
+        solve(board);
+
+        let end_time = Instant::now();
+        total_elapsed_time += end_time - start_time;
+    }
+
+    let average_elapsed_time = total_elapsed_time / NUM_RUNS;
+    println!("Average elapsed time: {:?}", average_elapsed_time);
 }
